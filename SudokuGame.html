@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sudoku — Juego Local</title>
+<style>
+  :root{--bg:#f4f7fb;--card:#ffffff;--accent:#0b5fff;--muted:#6b7280}
+  *{box-sizing:border-box}
+  body{font-family:Inter, system-ui, Arial; background:var(--bg); margin:0;display:flex;align-items:center;justify-content:center;height:100vh}
+  .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(16,24,40,.08);width:720px;max-width:96%}
+  h1{margin:0 0 12px;font-size:20px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  select,button{padding:8px 10px;border-radius:8px;border:1px solid #e6e9ef;background:white;cursor:pointer}
+  button.primary{background:var(--accent);color:white;border:none}
+  .grid{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;padding:8px;background:#eef3ff;border-radius:8px}
+  .cell{position:relative;padding-top:100%;background:white;border-radius:6px;overflow:hidden;border:1px solid #e6e9ef}
+  .cell input{position:absolute;top:0;left:0;width:100%;height:100%;border:none;font-size:18px;text-align:center;background:transparent}
+  .givencell{background:#f1f5f9;font-weight:700}
+  .thick-row{border-bottom:3px solid #cbd5e1}
+  .thick-col{border-right:3px solid #cbd5e1}
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--muted);font-size:14px}
+  .small{font-size:13px;color:var(--muted)}
+  @media (max-width:520px){.card{padding:12px}}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Sudoku — Juego local</h1>
+  <div class="controls">
+    <label for="difficulty" class="small">Dificultad:</label>
+    <select id="difficulty">
+      <option value="36">Fácil</option>
+      <option value="46" selected>Media</option>
+      <option value="54">Difícil</option>
+    </select>
+    <button id="newGame" class="primary">Nuevo Juego</button>
+    <button id="solve">Resolver</button>
+    <button id="check">Comprobar</button>
+    <button id="clear">Limpiar</button>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center"><span class="small">Movimiento:</span><span id="status" class="small">—</span></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="footer">
+    <div>Haz clic en una celda y escribe 1–9. Usa botones para acciones.</div>
+    <div class="small">Creado localmente — Ábrelo con Live Server o doble clic.</div>
+  </div>
+</div>
+
+<script>
+// Sudoku engine: generador, solucionador (backtracking), y UI
+
+// Utils
+function clone(board){ return board.map(r=>r.slice()) }
+function range(n){ return [...Array(n).keys()] }
+
+// Solver: backtracking, optionally count solutions up to limit
+function solveBacktrack(board, limit=1){
+  // board: 9x9 array with 0 for empties
+  let solutions = 0;
+  const b = clone(board);
+
+  function valid(b,row,col,val){
+    for(let i=0;i<9;i++) if(b[row][i]===val) return false;
+    for(let i=0;i<9;i++) if(b[i][col]===val) return false;
+    const sr = Math.floor(row/3)*3; const sc = Math.floor(col/3)*3;
+    for(let r=sr;r<sr+3;r++) for(let c=sc;c<sc+3;c++) if(b[r][c]===val) return false;
+    return true;
+  }
+
+  function findEmpty(){
+    for(let r=0;r<9;r++) for(let c=0;c<9;c++) if(b[r][c]===0) return [r,c];
+    return null;
+  }
+
+  function backtrack(){
+    if(solutions>=limit) return;
+    const pos = findEmpty();
+    if(!pos){ solutions++; return; }
+    const [r,c]=pos;
+    for(let v=1;v<=9;v++){
+      if(valid(b,r,c,v)){
+        b[r][c]=v;
+        backtrack();
+        b[r][c]=0;
+        if(solutions>=limit) return;
+      }
+    }
+  }
+  backtrack();
+  return solutions;
+}
+
+// Generate full valid board using randomized backtracking
+function generateFull(){
+  const board = Array.from({length:9},()=>Array(9).fill(0));
+  function valid(board,row,col,val){
+    for(let i=0;i<9;i++) if(board[row][i]===val) return false;
+    for(let i=0;i<9;i++) if(board[i][col]===val) return false;
+    const sr = Math.floor(row/3)*3; const sc = Math.floor(col/3)*3;
+    for(let r=sr;r<sr+3;r++) for(let c=sc;c<sc+3;c++) if(board[r][c]===val) return false;
+    return true;
+  }
+  function backtrack(pos=0){
+    if(pos===81) return true;
+    const r=Math.floor(pos/9), c=pos%9;
+    let nums=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);
+    for(const n of nums){
+      if(valid(board,r,c,n)){
+        board[r][c]=n;
+        if(backtrack(pos+1)) return true;
+        board[r][c]=0;
+      }
+    }
+    return false;
+  }
+  backtrack();
+  return board;
+}
+
+// Remove numbers to create puzzle while keeping unique solution (attempts based on holes)
+function makePuzzle(fullBoard, holesTarget){
+  const puzzle = clone(fullBoard);
+  let cells = range(81).sort(()=>Math.random()-0.5);
+  let removed = 0;
+  for(const idx of cells){
+    if(removed>=holesTarget) break;
+    const r=Math.floor(idx/9), c=idx%9;
+    const backup = puzzle[r][c];
+    puzzle[r][c]=0;
+    // check uniqueness: count solutions up to 2
+    const sols = solveBacktrack(puzzle,2);
+    if(sols!==1){ // if not unique, revert
+      puzzle[r][c]=backup;
+    } else {
+      removed++;
+    }
+  }
+  return puzzle;
+}
+
+// --- UI glue ---
+const gridEl = document.getElementById('grid');
+const status = document.getElementById('status');
+let full = null; // solution
+let puzzle = null; // current puzzle
+let givenMask = null; // booleans
+
+function buildGrid(){
+  gridEl.innerHTML='';
+  for(let r=0;r<9;r++){
+    for(let c=0;c<9;c++){
+      const idx = r*9+c;
+      const cell = document.createElement('div');
+      cell.className='cell';
+      // thick borders for 3x3 boxes
+      if((r+1)%3===0 && r!==8) cell.style.borderBottom='3px solid #cbd5e1';
+      if((c+1)%3===0 && c!==8) cell.style.borderRight='3px solid #cbd5e1';
+      const input = document.createElement('input');
+      input.type='text'; input.maxLength=1; input.inputMode='numeric';
+      input.dataset.r=r; input.dataset.c=c;
+      input.addEventListener('input', onInput);
+      input.addEventListener('keydown', onKeyDown);
+      cell.appendChild(input);
+      gridEl.appendChild(cell);
+    }
+  }
+}
+
+function onKeyDown(e){
+  const inpt = e.target;
+  if(e.key==='ArrowUp' || e.key==='ArrowDown' || e.key==='ArrowLeft' || e.key==='ArrowRight'){
+    e.preventDefault(); moveFocus(e.key, inpt);
+  }
+}
+function moveFocus(dir, input){
+  const r = +input.dataset.r; const c=+input.dataset.c;
+  let nr=r, nc=c;
+  if(dir==='ArrowUp') nr = (r+8)%9;
+  if(dir==='ArrowDown') nr = (r+1)%9;
+  if(dir==='ArrowLeft') nc = (c+8)%9;
+  if(dir==='ArrowRight') nc = (c+1)%9;
+  const selector = `input[data-r="${nr}"][data-c="${nc}"]`;
+  const next = document.querySelector(selector);
+  if(next) next.focus();
+}
+
+function onInput(e){
+  const val = e.target.value.replace(/[^1-9]/g,'');
+  e.target.value = val;
+}
+
+function renderBoard(board){
+  const inputs = gridEl.querySelectorAll('input');
+  inputs.forEach(inp=>{ const r=+inp.dataset.r,c=+inp.dataset.c; inp.value = board[r][c]||''; inp.disabled = !!givenMask[r][c]; inp.classList.toggle('givencell', !!givenMask[r][c]); });
+}
+
+function setPuzzle(newPuzzle, solution){
+  puzzle = clone(newPuzzle);
+  full = clone(solution);
+  givenMask = Array.from({length:9},(_,r)=>Array.from({length:9},(_,c)=> newPuzzle[r][c]!==0));
+  renderBoard(puzzle);
+  status.textContent = 'Juego cargado';
+}
+
+// Buttons
+document.getElementById('newGame').addEventListener('click', ()=>{
+  const holes = parseInt(document.getElementById('difficulty').value,10);
+  startNew(holes);
+});
+document.getElementById('solve').addEventListener('click', ()=>{
+  if(!full) return; fillBoard(full); status.textContent='Resuelto';
+});
+document.getElementById('check').addEventListener('click', ()=>{
+  const current = readBoard();
+  if(!current) return;
+  const ok = validateBoard(current);
+  status.textContent = ok? '¡Correcto (parcial/completo)!' : 'Hay errores en tu solución';
+});
+document.getElementById('clear').addEventListener('click', ()=>{
+  if(!puzzle) return;
+  const inputs = gridEl.querySelectorAll('input');
+  inputs.forEach(inp=>{ const r=+inp.dataset.r,c=+inp.dataset.c; if(!givenMask[r][c]) inp.value=''; });
+  status.textContent='Limpio';
+});
+
+function fillBoard(board){
+  const inputs = gridEl.querySelectorAll('input');
+  inputs.forEach(inp=>{ const r=+inp.dataset.r,c=+inp.dataset.c; inp.value = board[r][c]||''; });
+}
+
+function readBoard(){
+  if(!puzzle) return null;
+  const board = Array.from({length:9},()=>Array(9).fill(0));
+  const inputs = gridEl.querySelectorAll('input');
+  for(const inp of inputs){
+    const r=+inp.dataset.r,c=+inp.dataset.c;
+    const v = inp.value.trim();
+    if(v==='') board[r][c]=0; else board[r][c]=parseInt(v,10);
+  }
+  return board;
+}
+
+function validateBoard(board){
+  // returns true if no conflicts and if filled equals solution where solution known
+  // check rows, cols, boxes for duplicates
+  for(let r=0;r<9;r++){
+    const seen = new Set();
+    for(let c=0;c<9;c++){ const v=board[r][c]; if(v===0) continue; if(seen.has(v)) return false; seen.add(v);} }
+  for(let c=0;c<9;c++){
+    const seen=new Set(); for(let r=0;r<9;r++){const v=board[r][c]; if(v===0) continue; if(seen.has(v)) return false; seen.add(v);} }
+  for(let br=0;br<3;br++) for(let bc=0;bc<3;bc++){
+    const seen=new Set(); for(let r=br*3;r<br*3+3;r++) for(let c=bc*3;c<bc*3+3;c++){ const v=board[r][c]; if(v===0) continue; if(seen.has(v)) return false; seen.add(v);} }
+  // if full, check equals solution
+  let fullFlag=true; for(let r=0;r<9;r++) for(let c=0;c<9;c++) if(board[r][c]===0) fullFlag=false;
+  if(fullFlag && full){
+    for(let r=0;r<9;r++) for(let c=0;c<9;c++) if(board[r][c] !== full[r][c]) return false;
+  }
+  return true;
+}
+
+function startNew(holes){
+  status.textContent='Generando... espera';
+  // generate full board then puzzle
+  setTimeout(()=>{
+    const fullBoard = generateFull();
+    const puzzleBoard = makePuzzle(fullBoard, holes);
+    setPuzzle(puzzleBoard, fullBoard);
+    status.textContent='Listo — buena suerte!';
+  }, 50);
+}
+
+// init
+buildGrid();
+// auto start medium
+startNew(46);
+
+</script>
+</body>
+</html>

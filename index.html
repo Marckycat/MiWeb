@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú de Juegos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: url('Stellar.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+    }
+    body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+    }
+
+    .container {
+            max-width: 800px;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+    .menu {
+      display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+    }
+    h1 {
+      color: #4fc3f7;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    button {
+      background: linear-gradient(135deg, #0066cc, #4fc3f7);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #004080, #0288d1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active{
+      transform: translate(0);
+    }
+
+    .game-icon{
+      font-size: 1.3rem;
+    }
+    @media(max-width: 600px){
+      .container{
+        padding: 20px;
+        width: 90%;
+      }
+      h1{
+        font-size: 2rem;
+      }
+      button{
+        width: 100%;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <h1>🎮 Menú de Juegos</h1>
+    <button onclick="location.href='SudokuGame.html'">
+      <span class="game-icon">🔢</span> Jugar Sudoku
+            </button>
+    <button onclick="location.href='PipsGame.html'">
+      <span class="game-icon">🎲</span> Jugar Pips
+            </button>
+    <button onclick="location.href='SpellingBeeGame.html'">
+      <span class="game-icon">🐝</span> Jugar SpellingBee
+            </button>
+        </div>
+    </div>
+</body>
+</html>
