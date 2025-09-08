@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+p {
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+}
+/*Estilo de tablero*/
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 5px;
+    margin: 20px auto;
+    width: max-content;
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cell {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    position: relative;
+}
+
+.region-label {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*Colores de regiones*/ 
+.region0 {background: #f9c2ff; border-color: #d63384;}
+.region1 {background: #c2f0ff; border-color: #339af0;}
+.region2 {background: #ffe5b4; border-color: #fd7e14;}
+.region3 {background: #d1ffd1; border-color: #198754;}
+
+.dominoes {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.domino {
+    width: 120px;
+    height: 60px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    display: flex;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    cursor: grab;
+}
+
+/*Estilo para cuando se esta arrastrando una ficha*/
+.domino.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+/*Linea divisora en el centro de la ficha*/
+.domino::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    height: 80%;
+    width: 2px;
+    background-color: #ccc;
+    transform: translateX(-50%);
+}
+
+.half {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.pip {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    position: absolute;
+}
+
+/* --- Columna Izquierda --- */
+.pos-1 { top: 15%; left: 20%; } /* Superior izquierda */
+.pos-2 { top: 50%; left: 20%; transform: translateY(-50%); } /* Media izquierda */
+.pos-3 { bottom: 15%; left: 20%; } /* Inferior izquierda */
+
+/* --- Columna Central --- */
+.pos-4 { top: 50%; left: 50%; transform: translate(-50%, -50%); } /* Centro */
+
+/* --- Columna Derecha --- */
+.pos-5 { top: 15%; right: 20%; } /* Superior derecha */
+.pos-6 { top: 50%; right: 20%; transform: translateY(-50%); } /* Media derecha */
+.pos-7 { bottom: 15%; right: 20%; } /* Inferior derecha */

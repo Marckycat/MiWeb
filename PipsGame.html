@@ -1,153 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Pips — Juego Local</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f6e1f5;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 { margin-bottom: 10px; }
-
-  .board {
-    display: grid;
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(4, 80px);
-    gap: 5px;
-    margin: 20px auto;
-    width: max-content;
-    background: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-  .cell {
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    background: #fafafa;
-    position: relative;
-  }
-  .region-label {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 8px;
-  }
-
-  /* Colores de regiones */
-  .region0 { background: #f9c2ff; border-color: #d63384; }
-  .region1 { background: #c2f0ff; border-color: #0dcaf0; }
-  .region2 { background: #ffe5b4; border-color: #fd7e14; }
-  .region3 { background: #d1ffd1; border-color: #198754; }
-
-  .dominoes {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 30px;
-    flex-wrap: wrap;
-  }
-  .domino {
-    width: 70px;
-    height: 30px;
-    background: white;
-    border: 2px solid #333;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    cursor: grab;
-    user-select: none;
-  }
-  .pip {
-    width: 8px; height: 8px;
-    background: black;
-    border-radius: 50%;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Pips — Juego Local</title>
+  <link rel="stylesheet" href="styles/stylePips.css"> 
 </head>
 <body>
   <h1>🎲 Pips</h1>
   <p>Coloca las fichas de dominó en el tablero de forma que la suma de cada región coincida con su número.</p>
 
   <div class="board" id="board">
-    <!-- Regiones del tablero (ejemplo simplificado con 4 regiones) -->
     <div class="cell region0" data-region="0"></div>
-    <div class="cell region0" data-region="0"><div class="region-label" style="background:#d63384;">0</div></div>
+    <div class="cell region0" data-region="0">
+      <div class="region-label" style="background:#d63384;">0</div>
+    </div>
     <div class="cell region1" data-region="1"></div>
 
     <div class="cell region0" data-region="0"></div>
-    <div class="cell region1" data-region="1"><div class="region-label" style="background:#0dcaf0;">5</div></div>
+    <div class="cell region1" data-region="1">
+      <div class="region-label" style="background:#339af0;">5</div>
+    </div>
     <div class="cell region1" data-region="1"></div>
 
     <div class="cell region2" data-region="2"></div>
     <div class="cell region2" data-region="2"></div>
-    <div class="cell region3" data-region="3"><div class="region-label" style="background:#fd7e14;">9</div></div>
+    <div class="cell region3" data-region="3">
+      <div class="region-label" style="background:#198754;">9</div>
+    </div>
 
-    <div class="cell region2" data-region="2"><div class="region-label" style="background:#198754;">10</div></div>
+    <div class="cell region2" data-region="2">
+      <div class="region-label" style="background:#fd7e14;">10</div>
+    </div>
     <div class="cell region2" data-region="2"></div>
     <div class="cell region3" data-region="3"></div>
   </div>
 
   <div class="dominoes" id="dominoes">
-    <!-- Ejemplo de fichas -->
+    
     <div class="domino" draggable="true" data-value="2,3">
-      <span>⚀⚁</span>
+        <div class="half">
+            <span class="pip pos-1"></span>
+            <span class="pip pos-7"></span>
+        </div>
+        <div class="half">
+            <span class="pip pos-1"></span>
+            <span class="pip pos-4"></span>
+            <span class="pip pos-7"></span>
+        </div>
     </div>
+
     <div class="domino" draggable="true" data-value="1,1">
-      <span>⚀⚀</span>
+        <div class="half">
+            <span class="pip pos-4"></span>
+        </div>
+        <div class="half">
+            <span class="pip pos-4"></span>
+        </div>
     </div>
+
     <div class="domino" draggable="true" data-value="4,2">
-      <span>⚃⚁</span>
+        <div class="half">
+            <span class="pip pos-1"></span>
+            <span class="pip pos-3"></span>
+            <span class="pip pos-5"></span>
+            <span class="pip pos-7"></span>
+        </div>
+        <div class="half">
+            <span class="pip pos-1"></span>
+            <span class="pip pos-7"></span>
+        </div>
     </div>
+
     <div class="domino" draggable="true" data-value="5,0">
-      <span>⚄⚀</span>
+        <div class="half">
+            <span class="pip pos-1"></span>
+            <span class="pip pos-3"></span>
+            <span class="pip pos-4"></span>
+            <span class="pip pos-5"></span>
+            <span class="pip pos-7"></span>
+        </div>
+        <div class="half">
+            </div>
     </div>
   </div>
 
-  <button onclick="checkSolution()" style="margin-top:20px;padding:10px 20px;">Comprobar</button>
+  <button id="checkBtn" style="margin-top:20px;padding:10px 20px;">Comprobar</button>
   <p id="status"></p>
+  <p id="regionSums" class="region-sums"></p>
 
-<script>
-const dominoes = document.querySelectorAll('.domino');
-const cells = document.querySelectorAll('.cell');
-let placed = {};
-
-dominoes.forEach(domino => {
-  domino.addEventListener('dragstart', e => {
-    e.dataTransfer.setData("text/plain", domino.dataset.value);
-    e.dataTransfer.setData("dominoId", domino.innerHTML);
-  });
-});
-
-cells.forEach(cell => {
-  cell.addEventListener('dragover', e => e.preventDefault());
-  cell.addEventListener('drop', e => {
-    e.preventDefault();
-    const value = e.dataTransfer.getData("text/plain");
-    if(cell.childElementCount === 0){ // no sobrescribir label
-      cell.textContent = value.replace(",","+");
-      placed[cell.dataset.region] = (placed[cell.dataset.region]||0) + value.split(",").map(Number).reduce((a,b)=>a+b,0);
-    }
-  });
-});
-
-function checkSolution(){
-  const goals = {0:0,1:5,2:10,3:9};
-  let ok=true;
-  for(const r in goals){
-    if((placed[r]||0)!==goals[r]) ok=false;
-  }
-  document.getElementById("status").textContent = ok?"✅ ¡Correcto!":"❌ Revisa tu solución";
-}
-</script>
+  <script src="scripts/scriptPips.js"></script> 
 </body>
 </html>
