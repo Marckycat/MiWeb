@@ -1,21 +1,22 @@
+/* === ESTILOS GENERALES Y DEL JUEGO === */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background: #f0f0f0;
+    background: #f6e1f5;
     margin: 0;
     padding: 20px;
 }
 
 h1 {
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: 10px;
 }
 
 p {
     max-width: 600px;
     margin: 0 auto 20px auto;
 }
-/*Estilo de tablero*/
+
+/* === ESTILOS DEL TABLERO (Board) === */
 .board {
     display: grid;
     grid-template-columns: repeat(3, 80px);
@@ -27,6 +28,7 @@ p {
     padding: 10px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative; /* Para posicionar las fichas colocadas */
 }
 
 .cell {
@@ -34,6 +36,7 @@ p {
     border-radius: 8px;
     background: #fafafa;
     position: relative;
+    transition: background-color 0.2s ease; /* Transición suave */
 }
 
 .region-label {
@@ -45,17 +48,16 @@ p {
     color: white;
     padding: 2px 6px;
     border-radius: 8px;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    user-select: none; /* Evita que el texto se seleccione al arrastrar */
 }
 
-/*Colores de regiones*/ 
-.region0 {background: #f9c2ff; border-color: #d63384;}
-.region1 {background: #c2f0ff; border-color: #339af0;}
-.region2 {background: #ffe5b4; border-color: #fd7e14;}
-.region3 {background: #d1ffd1; border-color: #198754;}
+/* Colores de regiones */
+.region0 { background: #f9c2ff; border-color: #d63384; }
+.region1 { background: #c2f0ff; border-color: #339af0; }
+.region2 { background: #ffe5b4; border-color: #fd7e14; }
+.region3 { background: #d1ffd1; border-color: #198754; }
 
+/* === ESTILOS DE LA BANDEJA DE FICHAS === */
 .dominoes {
     display: flex;
     justify-content: center;
@@ -63,27 +65,24 @@ p {
     margin-top: 30px;
     flex-wrap: wrap;
     padding: 20px;
+    min-height: 70px; /* Para que no colapse si se mueven todas las fichas */
 }
 
+/* Fichas en la bandeja inferior */
 .domino {
-    width: 120px;
-    height: 60px;
+    width: 100px;
+    height: 50px;
     border: 1px solid #333;
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     background: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     position: relative;
     cursor: grab;
+    transition: opacity 0.2s ease;
 }
 
-/*Estilo para cuando se esta arrastrando una ficha*/
-.domino.dragging {
-    opacity: 0.5;
-    cursor: grabbing;
-}
-
-/*Linea divisora en el centro de la ficha*/
+/* Línea divisoria de la ficha */
 .domino::before {
     content: '';
     position: absolute;
@@ -95,31 +94,83 @@ p {
     transform: translateX(-50%);
 }
 
+/* === ESTILOS VISUALES DE LA FICHA (PIPS) === */
 .half {
     width: 50%;
     height: 100%;
     position: relative;
-    padding: 5px;
+    padding: 4px;
     box-sizing: border-box;
 }
 
 .pip {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     background: black;
     border-radius: 50%;
     position: absolute;
 }
 
-/* --- Columna Izquierda --- */
-.pos-1 { top: 15%; left: 20%; } /* Superior izquierda */
-.pos-2 { top: 50%; left: 20%; transform: translateY(-50%); } /* Media izquierda */
-.pos-3 { bottom: 15%; left: 20%; } /* Inferior izquierda */
+/* Posiciones de los pips */
+.pos-1 { top: 15%; left: 20%; }
+.pos-2 { top: 50%; left: 20%; transform: translateY(-50%); }
+.pos-3 { bottom: 15%; left: 20%; }
+.pos-4 { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.pos-5 { top: 15%; right: 20%; }
+.pos-6 { top: 50%; right: 20%; transform: translateY(-50%); }
+.pos-7 { bottom: 15%; right: 20%; }
 
-/* --- Columna Central --- */
-.pos-4 { top: 50%; left: 50%; transform: translate(-50%, -50%); } /* Centro */
+/* === ESTILOS PARA INTERACCIÓN (DRAG & DROP) === */
 
-/* --- Columna Derecha --- */
-.pos-5 { top: 15%; right: 20%; } /* Superior derecha */
-.pos-6 { top: 50%; right: 20%; transform: translateY(-50%); } /* Media derecha */
-.pos-7 { bottom: 15%; right: 20%; } /* Inferior derecha */
+/* Ficha mientras se arrastra */
+.domino.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+/* Estilo para el cursor cuando el modo rotación está activo */
+body.rotate-cursor {
+    cursor: grabbing;
+}
+
+/* Celda sobre la que se está arrastrando una ficha */
+.cell.over {
+    background-color: #e0e0e0;
+    border-style: solid;
+}
+
+/* Para evitar que se pueda soltar una ficha sobre una celda ocupada */
+.cell.has-domino {
+    pointer-events: none;
+}
+
+/* Ficha que ya ha sido colocada en el tablero */
+.domino.placed {
+    position: absolute; /* Se posiciona relativo al .board */
+    margin: 0;
+    z-index: 10;
+    cursor: pointer; /* Para indicar que se puede hacer clic para devolverla */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Ficha colocada en horizontal */
+.domino.placed.horizontal {
+    width: 165px; /* 80px + 80px + 5px de gap */
+    height: 80px;
+}
+
+/* Ficha colocada en vertical */
+.domino.placed.vertical {
+    width: 80px;
+    height: 165px; /* 80px + 80px + 5px de gap */
+    flex-direction: column; /* Pone las mitades una encima de otra */
+}
+
+/* Ajuste de la línea divisoria para la ficha vertical */
+.domino.placed.vertical::before {
+    width: 80%;
+    height: 2px;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+}
