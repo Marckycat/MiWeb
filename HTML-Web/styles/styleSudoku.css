@@ -1,0 +1,93 @@
+:root {
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --accent:#0b5fff;
+  --muted:#6b7280;
+}
+* { box-sizing:border-box; }
+body {
+  font-family: Inter, system-ui, Arial;
+  background: var(--bg);
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+.card {
+  background: var(--card);
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(16,24,40,.08);
+  width:720px;
+  max-width:96%;
+}
+h1 {
+  margin:0 0 12px;
+  font-size:20px;
+}
+.controls {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-bottom:12px;
+}
+select, button {
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #e6e9ef;
+  background:white;
+  cursor:pointer;
+}
+button.primary {
+  background: var(--accent);
+  color:white;
+  border:none;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  gap:4px;
+  padding:8px;
+  background:#eef3ff;
+  border-radius:8px;
+}
+.cell {
+  position:relative;
+  padding-top:100%;
+  background:white;
+  border-radius:6px;
+  overflow:hidden;
+  border:1px solid #e6e9ef;
+}
+.cell input {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  border:none;
+  font-size:18px;
+  text-align:center;
+  background:transparent;
+}
+.givencell {
+  background:#f1f5f9;
+  font-weight:700;
+}
+.footer {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:14px;
+}
+.small {
+  font-size:13px;
+  color:var(--muted);
+}
+@media (max-width:520px){
+  .card{padding:12px}
+}
