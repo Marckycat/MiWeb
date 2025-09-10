@@ -82,6 +82,28 @@ p {
     transition: opacity 0.2s ease;
 }
 
+/* Ficha en la bandeja en modo vertical */
+.domino.vertical {
+    width: 50px;       /* Ancho se reduce */
+    height: 100px;     /* Alto se incrementa */
+    flex-direction: column; /* Pone las mitades una encima de otra */
+}
+
+/* Ajuste de la línea divisoria para la ficha vertical en la bandeja */
+.domino.vertical::before {
+    width: 80%;
+    height: 2px;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+}
+
+/* Ajuste de las mitades para la ficha vertical */
+.domino.vertical .half {
+    width: 100%;
+    height: 50%;
+}
+
 /* Línea divisoria de la ficha */
 .domino::before {
     content: '';

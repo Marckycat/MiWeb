@@ -36,53 +36,48 @@
   </div>
 
   <div class="dominoes" id="dominoes">
-    
+    <div class="domino" draggable="true" data-value="0,0">
+        <div class="half"></div>
+        <div class="half"></div>
+    </div>
+    <div class="domino" draggable="true" data-value="0,5">
+        <div class="half"></div>
+        <div class="half">
+            <span class="pip pos-1"></span><span class="pip pos-3"></span><span class="pip pos-4"></span>
+            <span class="pip pos-5"></span><span class="pip pos-7"></span>
+        </div>
+    </div>
+    <div class="domino" draggable="true" data-value="1,1">
+        <div class="half"><span class="pip pos-4"></span></div>
+        <div class="half"><span class="pip pos-4"></span></div>
+    </div>
     <div class="domino" draggable="true" data-value="2,3">
         <div class="half">
-            <span class="pip pos-1"></span>
-            <span class="pip pos-7"></span>
+            <span class="pip pos-1"></span><span class="pip pos-7"></span>
         </div>
         <div class="half">
-            <span class="pip pos-1"></span>
-            <span class="pip pos-4"></span>
+            <span class="pip pos-1"></span><span class="pip pos-4"></span><span class="pip pos-7"></span>
+        </div>
+    </div>
+    <div class="domino" draggable="true" data-value="2,4">
+        <div class="half">
+            <span class="pip pos-1"></span><span class="pip pos-7"></span>
+        </div>
+        <div class="half">
+            <span class="pip pos-1"></span><span class="pip pos-3"></span><span class="pip pos-5"></span>
             <span class="pip pos-7"></span>
         </div>
     </div>
-
-    <div class="domino" draggable="true" data-value="1,1">
+    <div class="domino" draggable="true" data-value="3,6">
         <div class="half">
-            <span class="pip pos-4"></span>
+            <span class="pip pos-1"></span><span class="pip pos-4"></span><span class="pip pos-7"></span>
         </div>
         <div class="half">
-            <span class="pip pos-4"></span>
-        </div>
-    </div>
-
-    <div class="domino" draggable="true" data-value="4,2">
-        <div class="half">
-            <span class="pip pos-1"></span>
-            <span class="pip pos-3"></span>
-            <span class="pip pos-5"></span>
-            <span class="pip pos-7"></span>
-        </div>
-        <div class="half">
-            <span class="pip pos-1"></span>
-            <span class="pip pos-7"></span>
+            <span class="pip pos-1"></span><span class="pip pos-2"></span><span class="pip pos-3"></span>
+            <span class="pip pos-5"></span><span class="pip pos-6"></span><span class="pip pos-7"></span>
         </div>
     </div>
-
-    <div class="domino" draggable="true" data-value="5,0">
-        <div class="half">
-            <span class="pip pos-1"></span>
-            <span class="pip pos-3"></span>
-            <span class="pip pos-4"></span>
-            <span class="pip pos-5"></span>
-            <span class="pip pos-7"></span>
-        </div>
-        <div class="half">
-            </div>
-    </div>
-  </div>
+</div>
 
   <button id="checkBtn" style="margin-top:20px;padding:10px 20px;">Comprobar</button>
   <p id="status"></p>
