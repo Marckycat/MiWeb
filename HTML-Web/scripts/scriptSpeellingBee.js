@@ -49,7 +49,6 @@ function checkWord() {
     return;
   }
 
-  // ✅ En esta demo aceptamos cualquier palabra formada solo con las letras del panal
   for (const ch of word) {
     if (!letters.includes(ch)) {
       alert("Letra inválida: " + ch);
@@ -57,7 +56,6 @@ function checkWord() {
     }
   }
 
-  // si pasa las reglas
   found.push(word);
   score += word.length;
   document.getElementById("score").textContent = score;

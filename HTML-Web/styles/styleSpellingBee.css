@@ -8,13 +8,14 @@ body {
 
 h1 {
   margin: 10px 0;
+  font-size: 24px;
 }
 
 /* Panal hexagonal */
 .hive {
   display: grid;
-  grid-template-columns: repeat(3, 80px);
-  grid-template-rows: repeat(3, 70px);
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 55px);
   justify-content: center;
   gap: 5px;
   margin: 20px auto;
@@ -22,17 +23,18 @@ h1 {
 }
 
 .cell {
-  width: 70px;
-  height: 70px;
+  width: 55px;
+  height: 55px;
   background: #fdd835;
   clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.2s ease;
+  user-select: none;
 }
 
 .cell:hover {
@@ -45,10 +47,11 @@ h1 {
 }
 
 #wordInput {
-  font-size: 20px;
+  font-size: 18px;
   padding: 8px;
   margin-top: 15px;
-  width: 200px;
+  width: 80%;
+  max-width: 250px;
   text-align: center;
 }
 
@@ -72,9 +75,37 @@ h1 {
   margin-top: 20px;
   text-align: left;
   display: inline-block;
+  max-width: 90%;
+  word-break: break-word;
 }
 
 #foundWords div {
   padding: 4px;
   border-bottom: 1px solid #ccc;
+  font-size: 16px;
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 420px) {
+  .hive {
+    grid-template-columns: repeat(3, 45px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 4px;
+  }
+  .cell {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  #wordInput {
+    font-size: 16px;
+    max-width: 200px;
+  }
+  #submit {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  #foundWords div {
+    font-size: 14px;
+  }
 }
