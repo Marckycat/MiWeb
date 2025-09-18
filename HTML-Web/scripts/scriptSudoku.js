@@ -98,8 +98,12 @@ function buildGrid(){
       if((r+1)%3===0 && r!==8) cell.style.borderBottom='3px solid #cbd5e1';
       if((c+1)%3===0 && c!==8) cell.style.borderRight='3px solid #cbd5e1';
       const input=document.createElement('input');
-      input.type='text'; input.maxLength=1; input.inputMode='numeric';
-      input.dataset.r=r; input.dataset.c=c;
+      input.type='text';
+      input.maxLength=1;
+      input.inputMode='numeric'; // ✅ móvil: teclado numérico
+      input.pattern='[1-9]*';    // ✅ móvil
+      input.dataset.r=r;
+      input.dataset.c=c;
       input.addEventListener('input', onInput);
       input.addEventListener('keydown', onKeyDown);
       cell.appendChild(input);
@@ -111,7 +115,8 @@ function buildGrid(){
 function onKeyDown(e){
   const inpt=e.target;
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){
-    e.preventDefault(); moveFocus(e.key,inpt);
+    e.preventDefault();
+    moveFocus(e.key,inpt);
   }
 }
 function moveFocus(dir,input){
@@ -124,6 +129,7 @@ function moveFocus(dir,input){
   const next=document.querySelector(`input[data-r="${nr}"][data-c="${nc}"]`);
   if(next) next.focus();
 }
+
 function onInput(e){
   const val=e.target.value.replace(/[^1-9]/g,'');
   e.target.value=val;
@@ -173,6 +179,17 @@ document.getElementById('clear').addEventListener('click', ()=>{
   status.textContent='Limpio';
 });
 
+// ✅ NUEVO: Botón Borrar para móviles
+const eraseBtn=document.createElement('button');
+eraseBtn.textContent='Borrar';
+eraseBtn.className='primary';
+eraseBtn.style.marginTop='6px';
+eraseBtn.addEventListener('click', ()=>{
+  const active=document.activeElement;
+  if(active.tagName==='INPUT') active.value='';
+});
+document.querySelector('.controls').appendChild(eraseBtn);
+
 function fillBoard(board){
   const inputs=gridEl.querySelectorAll('input');
   inputs.forEach(inp=>{
@@ -213,6 +230,7 @@ function validateBoard(board){
   }
   return true;
 }
+
 function startNew(holes){
   status.textContent='Generando... espera';
   setTimeout(()=>{
